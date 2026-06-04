@@ -1,0 +1,106 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum ComplexStatus {
+  ACTIVE
+  TEMPORARILY_CLOSED
+  UNDER_RENOVATION
+  INACTIVE
+}
+
+enum UserRole {
+  ADMIN
+  TECHNICIAN
+  VIEWER
+}
+
+enum InstallationCategory {
+  DHW
+  HVAC
+  COOLING
+  VENTILATION
+  RENEWABLE
+}
+
+model User {
+  id           Int      @id @default(autoincrement())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         UserRole @default(VIEWER)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model HotelComplex {
+  id                Int                @id @default(autoincrement())
+  externalId        String?            @unique
+  name              String
+  internalCode      String             @unique
+  hotelChain        String?
+  address           String?
+  city              String?
+  province          String?
+  region            String?
+  country           String?
+  latitude          Float?
+  longitude         Float?
+  rooms             Int?
+  constructionYear  Int?
+  lastRenovationYear Int?
+  status            ComplexStatus      @default(ACTIVE)
+  director  String?
+  maintenanceManager String?
+  phone             String?
+  email             String?
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+
+  installations     TechnicalInstallation[]
+  images            ComplexImage[]
+  documents         ComplexDocument[]
+}
+
+model TechnicalInstallation {
+  id           Int                  @id @default(autoincrement())
+  complex      HotelComplex         @relation(fields: [complexId], references: [id])
+  complexId    Int
+  category     InstallationCategory
+  type         String?
+  manufacturer String?
+  model        String?
+  powerHeating Float?
+  powerCooling Float?
+  pvPowerKw    Float?
+  refrigerant  String?
+  year         Int?
+  status       String?
+  metadata     Json?
+}
+
+model ComplexImage {
+  id          Int           @id @default(autoincrement())
+  complex     HotelComplex  @relation(fields: [complexId], references: [id])
+  complexId   Int
+  url         String
+  title       String?
+  category    String?
+  createdAt   DateTime       @default(now())
+}
+
+model ComplexDocument {
+  id          Int           @id @default(autoincrement())
+  complex     HotelComplex  @relation(fields: [complexId], references: [id])
+  complexId   Int
+  url         String
+  name        String
+  mimeType    String
+  createdAt   DateTime       @default(now())
+}

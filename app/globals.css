@@ -1,0 +1,16 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 16 18 25;
+  --foreground: 249 250 251;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100;
+}
+
+.map-container {
+  position: relative;
+}
