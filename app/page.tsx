@@ -105,6 +105,29 @@ export default function HomePage() {
     [complexes, selectedId]
   );
 
+    const selectedDetail = useMemo(
+    () =>
+      selected &&
+      selected.latitude !== null &&
+      selected.longitude !== null
+        ? {
+            ...selected,
+            latitude: selected.latitude,
+            longitude: selected.longitude,
+            images: selected.images
+              .filter(
+                (image): image is ComplexImage & { url: string } =>
+                  image.url !== null
+              )
+              .map((image) => ({
+                ...image,
+                url: image.url,
+              })),
+          }
+        : null,
+    [selected]
+  );
+
   useEffect(() => {
     if (selectedId && !complexes.some((c) => c.id === selectedId)) {
       setSelectedId(null);
@@ -134,7 +157,7 @@ export default function HomePage() {
         </div>
 
         <ComplexDetailPanel
-          complex={selected}
+          complex={selectedDetail}
           onClose={() => setSelectedId(null)}
         />
       </div>

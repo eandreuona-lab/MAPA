@@ -37,12 +37,17 @@ interface ComplexDetail {
   longitude: number;
   constructionYear?: number | null;
   lastRenovationYear?: number | null;
+  director?: string | null;
   technicalManager?: string | null;
   maintenanceManager?: string | null;
   phone?: string | null;
   email?: string | null;
-  images?: ComplexImage[];
-  installations?: Installation[];
+  images: {
+    id: number;
+    url: string;
+    title?: string | null;
+  }[];
+  installations: Installation[];
 }
 
 interface Props {
